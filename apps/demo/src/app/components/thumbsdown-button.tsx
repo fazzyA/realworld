@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { favoriteArticle, unfavoriteArticle } from '../services/article.service';
+import { thumbsDownArticle, thumbsUpArticle } from '../services/article.service';
 import { Article } from '../models/article.model';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../auth/auth.context';
@@ -12,6 +12,7 @@ interface Props {
 export default function ThumbsDownButton({ article, isExtended }: Props) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  console.log(article);
 
   const [count, setCount] = useState(article.favoritesCount);
   const [favorited, setFavorited] = useState(article.favorited);
@@ -27,10 +28,10 @@ export default function ThumbsDownButton({ article, isExtended }: Props) {
 
     if (favorited) {
       setCount(count => count - 1);
-      await unfavoriteArticle(article.slug);
+      await thumbsUpArticle(article.slug);
     } else {
       setCount(count => count + 1);
-      await favoriteArticle(article.slug);
+      await thumbsDownArticle(article.slug);
     }
 
     setIsLoading(false);
@@ -43,7 +44,7 @@ export default function ThumbsDownButton({ article, isExtended }: Props) {
         onClick={updateCount}
         disabled={isLoading}
       >
-        <i className="ion-thumbs-down"></i> {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
+        <i className="ion-thumb-down"></i> {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
         <span className="counter">({count})</span>
       </button>
     );
@@ -54,7 +55,7 @@ export default function ThumbsDownButton({ article, isExtended }: Props) {
         onClick={updateCount}
         disabled={isLoading}
       >
-        <i className="ion-heart"></i> {count}
+        <i className="ion-thumb-down">cc</i> {count}
       </button>
     );
   }

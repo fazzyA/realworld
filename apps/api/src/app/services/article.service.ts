@@ -655,3 +655,99 @@ export const unfavoriteArticle = async (slugPayload: string, usernameAuth: strin
 
   return result;
 };
+
+export const thumbsDownArticle = async (slugPayload: string, usernameAuth: string) => {
+  const user = await findUserIdByUsername(usernameAuth);
+
+  const { _count, ...article } = await prisma.article.update({
+    where: {
+      slug: slugPayload,
+    },
+    data: {
+      favoritedBy: {
+        connect: {
+          id: user?.id,
+        },
+      },
+    },
+    include: {
+      tagList: {
+        select: {
+          name: true,
+        },
+      },
+      author: {
+        select: {
+          username: true,
+          bio: true,
+          image: true,
+          followedBy: true,
+        },
+      },
+      favoritedBy: true,
+      _count: {
+        select: {
+          favoritedBy: true,
+        },
+      },
+    },
+  });
+
+  const result = {
+    ...article,
+    author: profileMapper(article.author, usernameAuth),
+    tagList: article?.tagList.map((tag: Tag) => tag.name),
+    favorited: article.favoritedBy.some((favorited: any) => favorited.id === user?.id),
+    favoritesCount: _count?.favoritedBy,
+  };
+
+  return result;
+};
+
+export const thumbsDownRevertArticle = async (slugPayload: string, usernameAuth: string) => {
+  const user = await findUserIdByUsername(usernameAuth);
+
+  const { _count, ...article } = await prisma.article.update({
+    where: {
+      slug: slugPayload,
+    },
+    data: {
+      favoritedBy: {
+        disconnect: {
+          id: user?.id,
+        },
+      },
+    },
+    include: {
+      tagList: {
+        select: {
+          name: true,
+        },
+      },
+      author: {
+        select: {
+          username: true,
+          bio: true,
+          image: true,
+          followedBy: true,
+        },
+      },
+      favoritedBy: true,
+      _count: {
+        select: {
+          favoritedBy: true,
+        },
+      },
+    },
+  });
+
+  const result = {
+    ...article,
+    author: profileMapper(article.author, usernameAuth),
+    tagList: article?.tagList.map((tag: Tag) => tag.name),
+    favorited: article.favoritedBy.some((favorited: any) => favorited.id === user?.id),
+    favoritesCount: _count?.favoritedBy,
+  };
+
+  return result;
+};

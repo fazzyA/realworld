@@ -20,6 +20,7 @@ model Article {
   author      User      @relation("UserArticles", fields: [authorId], onDelete: Cascade, references: [id])
   authorId    Int
   favoritedBy User[]    @relation("UserFavorites")
+  thumbdownBy User[]    @relation("UserThumbDowns)
   comments    Comment[]
 }
 
@@ -51,6 +52,7 @@ model User {
   favorites  Article[] @relation("UserFavorites")
   followedBy User[]    @relation("UserFollows")
   following  User[]    @relation("UserFollows")
+  thumbdowns Article[] @relation("UserThumbDowns")
   comments   Comment[]
   demo       Boolean   @default(false)
 }

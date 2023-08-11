@@ -13,7 +13,7 @@ export async function getArticles(
     ...(tag ? { tag } : {}),
     ...(favorited ? { favorited } : {}),
   });
-  return fetch('https://api.realworld.io/api/articles?' + params, {
+  return fetch('http://localhost:3000/api/articles?' + params, {
     headers: getHeaders(),
     signal,
   }).then(res => res.json());
@@ -74,6 +74,22 @@ export async function favoriteArticle(slug: string): Promise<Article> {
 }
 
 export async function unfavoriteArticle(slug: string): Promise<Article> {
+  return fetch(`https://api.realworld.io/api/articles/${slug}/favorite`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  })
+    .then(res => res.json())
+    .then(res => res.article);
+}
+export async function thumbsDownArticle(slug: string): Promise<Article> {
+  return fetch(`https://api.realworld.io/api/articles/${slug}/favorite`, {
+    method: 'POST',
+    headers: getHeaders(),
+  })
+    .then(res => res.json())
+    .then(res => res.article);
+}
+export async function thumbsUpArticle(slug: string): Promise<Article> {
   return fetch(`https://api.realworld.io/api/articles/${slug}/favorite`, {
     method: 'DELETE',
     headers: getHeaders(),

@@ -12,6 +12,8 @@ import {
   getFeed,
   unfavoriteArticle,
   updateArticle,
+  thumbsDownArticle,
+  thumbsDownRevertArticle,
 } from '../services/article.service';
 
 const router = Router();
@@ -241,6 +243,48 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const article = await unfavoriteArticle(req.params.slug, req.auth?.user?.username as string);
+      res.json({ article });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+/**
+ * Unlike Thumbs down article
+ * @auth required
+ * @route {POST} /articles/:slug/favorite
+ * @param slug slug of the article (based on the title)
+ * @returns article favorited article
+ */
+router.post(
+  '/articles/:slug/thumbsdown',
+  auth.required,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const article = await thumbsDownArticle(req.params.slug, req.auth?.user?.username as string);
+      res.json({ article });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+/**
+ * Undo thumbs down article
+ * @auth required
+ * @route {DELETE} /articles/:slug/favorite
+ * @param slug slug of the article (based on the title)
+ * @returns article unfavorited article
+ */
+router.delete(
+  '/articles/:slug/thumbsdownrevert',
+  auth.required,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const article = await thumbsDownRevertArticle(
+        req.params.slug,
+        req.auth?.user?.username as string,
+      );
       res.json({ article });
     } catch (error) {
       next(error);
