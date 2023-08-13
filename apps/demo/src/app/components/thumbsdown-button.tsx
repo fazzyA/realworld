@@ -55,7 +55,7 @@ export default function ThumbsDownButton({ article, isExtended }: Props) {
         onClick={updateCount}
         disabled={isLoading}
       >
-        <i className="ion-thumb-down">cc</i> {count}
+        <i className="ion-thumb-down">ccc</i> {count}
       </button>
     );
   }
